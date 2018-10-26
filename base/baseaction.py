@@ -9,8 +9,8 @@ class Baseaction:
         self.driver = abc
 
     # 自定义一个元素查找方法
-    def find_element(self, feature):
-        #feature = By.XPATH,"//*[@text='显示']"
+    def find_element(self, feature,timeout=5, poll=1.0):
+        # feature = By.XPATH,"//*[@text='显示']"
         """
         依据用户传入的元素信息特征，然后返回当前用户想要查找元素
         :param feature: 元组类型，包含用户希望的查找方式，及该方式对应的值
@@ -18,12 +18,11 @@ class Baseaction:
         """
         by = feature[0]
         value = feature[1]
-        wait = WebDriverWait(self.driver, 5, 1)
+        wait = WebDriverWait(self.driver, timeout, poll)
         if by == By.XPATH:
-            #print( "说明了用户想要使用 xpath 路径的方式来获取元素" )
-            return wait.until(lambda x: x.find_element(by, self.make_xpath(value)))
-        else:
-            return wait.until(lambda x: x.find_element(feature[0], feature[1]))
+            # print( "说明了用户想要使用 xpath 路径的方式来获取元素" )
+            value = self.make_xpath(value)
+        return wait.until(lambda x: x.find_element(by,value))
 
     def find_elements(self,feature):
         wait = WebDriverWait(self.driver, 5, 1)
@@ -100,7 +99,13 @@ class Baseaction:
         start_y = self.get_device_size()[1]*0.5
         end_x = self.get_device_size()[0]*0.4
         end_y = self.get_device_size()[1]*0.5
-        self.driver.swipe( start_x,start_y,end_x,end_y )
+        self.driver.swipe( start_x,start_y,end_x,end_y)
+
+    # 自定义一个获取 toast内容的方法
+    def get_toast_content(self, message):
+        tmp_feature = By.XPATH, "//*[contains(@text,'%s')]" % message
+        ele = self.find_element(tmp_feature,timeout=5,poll=0.1)
+        return ele.text
 
 
 
