@@ -107,6 +107,19 @@ class Baseaction:
         ele = self.find_element(tmp_feature,timeout=5,poll=0.1)
         return ele.text
 
+    # 自定义一个工具函数，可以接收用户传递的部分 toast 信息，然后返回一个布尔值，来告诉
+    # 用户，目标 toast 到底是否存在
+    def is_toast_exist(self,mes):
+        # 拿着用户传过来的 message 去判断一下包含该内容的 toast 到底是否存在。
+        try:
+            self.get_toast_content("账号不存")
+            return True
+        except Exception:
+            # 如果目标 toast 不存在那么就说明我们的实际结果和预期结果不一样
+            # 因此我们想要的是断言失败
+            return False
+
+
 
 
 

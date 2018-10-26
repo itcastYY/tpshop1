@@ -1,5 +1,8 @@
 # -*- coding=utf-8 -*-
 import time
+
+import os
+
 from base import initDriver
 from page.page import Page
 
@@ -18,6 +21,10 @@ class TestDemo:
         self.page.inithomepage.click_myself()
         time.sleep(2)  # 涉及到页面转场我们选择停留一定的时间
 
+        # 此处我们应该添加一个判断，如果用户是登录的状态那么就执行退出
+        if self.page.initmyselfpage.is_loging():
+            self.page.initmyselfpage.login_out()
+
         # 点击登录注册按钮
         self.page.initmyselfpage.click_login_reg()
         time.sleep(1)  # 涉及到页面转场我们选择停留一定的时间
@@ -31,9 +38,13 @@ class TestDemo:
         # 点击登录
         self.page.initmyselfpage.click_enter()
 
-        # 测试登录点击之后的 toast 获取
-        toast_neirong = self.page.initmyselfpage.get_toast_content("账号不存")
+        # 先将当前的用例的执行结果保存起来
+        toast_status = self.page.initmyselfpage.is_toast_exist("账号不存")
+
+        if toast_status == True:
+            self.driver.get_screenshot_as_file(os.getcwd()+os.sep+"img/01.png")
+
         # 添加断言
-        assert toast_neirong == "账号不存在!"
+        assert toast_status
 
 
